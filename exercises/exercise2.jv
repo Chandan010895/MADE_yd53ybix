@@ -1,61 +1,72 @@
-// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
-//
-// SPDX-License-Identifier: AGPL-3.0-only
+// This Jayvee pipeline processes a CSV file from a URL, 
+// interpreting it and saving the results into a SQLite database.
+pipeline TreesPipeline {
 
-pipeline TreeDataPipeline {
+  // Sequence of blocks to process the data from extraction to loading
+  TreesExtractor
+    -> TreesTextFileInterpreter
+    -> TreesCSVInterpreter
+    -> TreesColumnDeleter
+    -> TreesTableInterpreter
+    -> TreesLoader;
 
-  // Define the structure of the pipeline.
-  SourceRetriever
-    -> TextInterpretationBlock
-    -> CSVParsingBlock
-    -> DataFilteringBlock
-    -> CoordinateSplittingBlock
-    -> TableMappingBlock
-    -> DatabaseInsertionBlock;
-
-  // Retrieve the CSV file from the given URL.
-  block SourceRetriever oftype HttpExtractor {
+  // Block for downloading the CSV file from a specified URL
+  block TreesExtractor oftype HttpExtractor {
     url: "https://opendata.rhein-kreis-neuss.de/api/v2/catalog/datasets/stadt-neuss-herbstpflanzung-2023/exports/csv";
   }
 
-  // Interpret the fetched file as a text file.
-  block TextInterpretationBlock oftype TextFileInterpreter { }
+  // Block to convert the downloaded binary data into text format
+  block TreesTextFileInterpreter oftype TextFileInterpreter { }
 
-  // Parse the CSV file.
-  block CSVParsingBlock oftype CSVInterpreter {
-    delimiter: ",";
+  // Block for parsing the CSV text file into a sheet structure
+  block TreesCSVInterpreter oftype CSVInterpreter {
+     delimiter: ";"; // The columns are separated by semicolons
+  }
+  
+  // Block to remove unnecessary columns from the dataset
+  block TreesColumnDeleter oftype ColumnDeleter {
+    delete: [column E]; // Deletes column E from the sheet
   }
 
-  // Filter rows based on the 'stadtteil' column, keeping only those starting with "Vogelsang".
-  block DataFilteringBlock oftype RowFilter {
-    condition: "stadtteil LIKE 'Vogelsang%'";
+  // User-defined value type for the 'stadtteil' column, with custom validation
+  valuetype StadtteilVal oftype text {
+    constraints: [ StadtteilFormat ];
+  }
+  
+  // User-defined value type for 'id', representing geographical points
+  valuetype GeopointVal oftype text {
+    constraints: [ GeoFormat ];
   }
 
-  // Split the "id" column into "geopoint_latitude" and "geopoint_longitude".
-  block CoordinateSplittingBlock oftype ColumnSplitter {
-    source_column: "id";
-    target_columns: ["geopoint_latitude", "geopoint_longitude"];
-    delimiter: ",";
-    trim: true;
+  // Regular expression constraint to validate 'stadtteil' values
+  constraint StadtteilFormat oftype RegexConstraint {
+    regex: /^Vogelsang(?:\s[\w-]+)*$/; 
+    // Ensures the value starts with "Vogelsang" and is followed by optional words
   }
 
-  // Map the columns to appropriate SQLite data types.
-  block TableMappingBlock oftype TableInterpreter {
+  // Regular expression constraint for validating geographical points in 'id' column
+  constraint GeoFormat oftype RegexConstraint {
+    regex: /^\d{1,3}\.\d+,\s\d{1,3}\.\d+$/; 
+    // Matches a format like "lat,long" for coordinates
+  }
+
+  // Block that maps the sheet into a structured table format
+  block TreesTableInterpreter oftype TableInterpreter {
     header: true;
     columns: [
-      "baum_id" oftype integer,
-      "stadtteil" oftype text,
-      "geopoint_latitude" oftype decimal,
-      "geopoint_longitude" oftype decimal,
-      "pflanzjahr" oftype integer,
-      "baumart_latein" oftype text
+      "lfd_nr" oftype integer,  // Sequential number
+      "stadtteil" oftype StadtteilVal,  // Neighborhood name, validated against 'StadtteilFormat'
+      "standort" oftype text,  // Location information
+      "baumart_botanisch" oftype text,  // Botanical tree species
+      "id" oftype GeopointVal,  // Geographical coordinates of the tree
+      "baumfamilie" oftype text  // Tree family
     ];
   }
 
-  // Load the processed data into a SQLite database.
-  block DatabaseInsertionBlock oftype SQLiteLoader {
+  // Final step to load the structured data into a SQLite database
+  block TreesLoader oftype SQLiteLoader {
     table: "trees";
-    file: "./trees.sqlite";
+    file: "./trees.sqlite";  // Specifies the database file to store the data
   }
 
 }
