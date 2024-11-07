@@ -1,13 +1,10 @@
-  
-  // SPDX-License-Identifier: AGPL-3.0-only
-
-// Pipeline Model: Processing Tree Data
-// This pipeline retrieves tree planting data from a CSV file hosted online, filters it, 
-// and stores it in a SQLite database.
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
 
 pipeline TreeDataPipeline {
 
-  // Define the components and the order of operations in the pipeline.
+  // Define the structure of the pipeline.
   SourceRetriever
     -> TextInterpretationBlock
     -> CSVParsingBlock
@@ -16,48 +13,49 @@ pipeline TreeDataPipeline {
     -> TableMappingBlock
     -> DatabaseInsertionBlock;
 
-  // The CSV file is downloaded from the specified URL.
+  // Retrieve the CSV file from the given URL.
   block SourceRetriever oftype HttpExtractor {
     url: "https://opendata.rhein-kreis-neuss.de/api/v2/catalog/datasets/stadt-neuss-herbstpflanzung-2023/exports/csv";
   }
 
-  // Converts the fetched file into a readable text format for further processing.
-  block TextInterpretationBlock oftype TextFileInterpreter {}
+  // Interpret the fetched file as a text file.
+  block TextInterpretationBlock oftype TextFileInterpreter { }
 
-  // Parses the text data as CSV, specifying the appropriate delimiter.
+  // Parse the CSV file.
   block CSVParsingBlock oftype CSVInterpreter {
-    delimiter: ","; // The delimiter used in the CSV file.
+    delimiter: ",";
   }
 
-  // Filters rows to keep only those with "stadtteil" starting with "Vogelsang".
+  // Filter rows based on the 'stadtteil' column, keeping only those starting with "Vogelsang".
   block DataFilteringBlock oftype RowFilter {
     condition: "stadtteil LIKE 'Vogelsang%'";
   }
 
-  // Splits "id" column (geo-coordinates) into "geopoint_latitude" and "geopoint_longitude".
+  // Split the "id" column into "geopoint_latitude" and "geopoint_longitude".
   block CoordinateSplittingBlock oftype ColumnSplitter {
     source_column: "id";
     target_columns: ["geopoint_latitude", "geopoint_longitude"];
-    delimiter: ","; 
+    delimiter: ",";
     trim: true;
   }
 
-  // Maps columns to appropriate SQLite data types and drops "baumart_deutsch".
+  // Map the columns to appropriate SQLite data types.
   block TableMappingBlock oftype TableInterpreter {
     header: true;
     columns: [
       "baum_id" oftype integer,
       "stadtteil" oftype text,
-      "geopoint_latitude" oftype float,
-      "geopoint_longitude" oftype float,
+      "geopoint_latitude" oftype decimal,
+      "geopoint_longitude" oftype decimal,
       "pflanzjahr" oftype integer,
       "baumart_latein" oftype text
     ];
   }
 
-  // Inserts the processed data into the SQLite database.
+  // Load the processed data into a SQLite database.
   block DatabaseInsertionBlock oftype SQLiteLoader {
-    table: "trees";        // Destination table name in the database
-    file: "./trees.sqlite"; // Path to the SQLite database file
-  }
+    table: "trees";
+    file: "./trees.sqlite";
+  }
+
 }
