@@ -1,0 +1,5 @@
+# Ignore CSV files
+/data/*.csv
+
+# Ignore SQLite database files
+/data/*.db
