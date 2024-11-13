@@ -1,0 +1,45 @@
+2024-11-13 22:01:04,972 - INFO - Downloading dataset from https://graphics.thomsonreuters.com/data/jails/Allstatesinsurvey.zip
+2024-11-13 22:01:06,075 - INFO - Downloaded dataset successfully.
+2024-11-13 22:01:06,077 - INFO - Extracted dataset. Files found: ['all_deaths.csv', 'all_jails.csv', 'reuters-jail-deaths-codesheets.xlsx']
+2024-11-13 22:01:06,374 - INFO - Loaded reuters-jail-deaths-codesheets.xlsx into DataFrame.
+2024-11-13 22:01:06,374 - INFO - Starting data cleaning process.
+2024-11-13 22:01:06,399 - INFO - Removed 0 duplicate rows.
+2024-11-13 22:01:06,399 - INFO - Missing values in columns:
+jails data                                                                                                          1
+Notes: causes of death were not always available, therefore totals of causes of death may not equal total deaths    1
+dtype: int64
+2024-11-13 22:01:06,399 - INFO - Data cleaning completed. Removed 0 rows.
+2024-11-13 22:01:06,399 - INFO - Storing data as CSV at data\jail_deaths.csv
+2024-11-13 22:01:06,399 - INFO - Data saved successfully as CSV.
+2024-11-13 22:01:06,399 - INFO - Storing data in SQLite database at data\jail_deaths.db (table: jail_deaths)
+2024-11-13 22:01:06,415 - INFO - Data stored successfully in SQLite database.
+2024-11-13 22:05:22,374 - INFO - Downloading dataset from https://graphics.thomsonreuters.com/data/jails/Allstatesinsurvey.zip
+2024-11-13 22:05:23,535 - INFO - Downloaded dataset successfully.
+2024-11-13 22:05:23,551 - INFO - Extracted dataset. Files found: ['all_deaths.csv', 'all_jails.csv', 'reuters-jail-deaths-codesheets.xlsx']
+2024-11-13 22:05:23,867 - INFO - Loaded reuters-jail-deaths-codesheets.xlsx into DataFrame.
+2024-11-13 22:05:23,871 - INFO - Starting data cleaning process.
+2024-11-13 22:05:23,873 - INFO - Removed 0 duplicate rows.
+2024-11-13 22:05:23,873 - INFO - Missing values in columns:
+jails data                                                                                                          1
+Notes: causes of death were not always available, therefore totals of causes of death may not equal total deaths    1
+dtype: int64
+2024-11-13 22:05:23,873 - INFO - Data cleaning completed. Removed 0 rows.
+2024-11-13 22:05:23,873 - INFO - Storing data as CSV at data\jail_deaths.csv
+2024-11-13 22:05:23,877 - INFO - Data saved successfully as CSV.
+2024-11-13 22:05:23,877 - INFO - Storing data in SQLite database at data\jail_deaths.db (table: jail_deaths)
+2024-11-13 22:05:23,914 - INFO - Data stored successfully in SQLite database.
+2024-11-13 22:08:59,736 - INFO - Starting download of dataset from https://graphics.thomsonreuters.com/data/jails/Allstatesinsurvey.zip
+2024-11-13 22:09:00,700 - INFO - Dataset downloaded successfully.
+2024-11-13 22:09:00,700 - INFO - Extracted the following files: ['all_deaths.csv', 'all_jails.csv', 'reuters-jail-deaths-codesheets.xlsx']
+2024-11-13 22:09:01,001 - INFO - Loaded data from reuters-jail-deaths-codesheets.xlsx into DataFrame.
+2024-11-13 22:09:01,001 - INFO - Commencing data cleaning process.
+2024-11-13 22:09:01,001 - INFO - Removed 0 duplicate rows.
+2024-11-13 22:09:01,001 - INFO - Missing values in the dataset before cleaning:
+jails data                                                                                                          1
+Notes: causes of death were not always available, therefore totals of causes of death may not equal total deaths    1
+dtype: int64
+2024-11-13 22:09:01,001 - INFO - Data cleaning completed. 0 rows removed.
+2024-11-13 22:09:01,001 - INFO - Saving cleaned data to CSV at data\jail_deaths.csv
+2024-11-13 22:09:01,001 - INFO - Data successfully saved to CSV.
+2024-11-13 22:09:01,001 - INFO - Storing cleaned data into SQLite database at data\jail_deaths.db (table: jail_deaths)
+2024-11-13 22:09:01,042 - INFO - Data successfully stored in SQLite database.

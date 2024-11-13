@@ -1,0 +1,119 @@
+jails data,"Notes: causes of death were not always available, therefore totals of causes of death may not equal total deaths"
+,
+field,description
+id,jail id number to link to deaths data
+fips,state and county FIPS code
+statecode,state postal code
+state,state of the jail
+state_notes,any relevant notes about the state's jails
+county,"county the jail is in, or counties the jail serves"
+jail,jail name
+jail_notes,any relevant notes about a specific jail
+d2008,total deaths in 2008
+d2009,total deaths in 2009
+d2010,total deaths in 2010
+d2011,total deaths in 2011
+d2012,total deaths in 2012
+d2013,total deaths in 2013
+d2014,total deaths in 2014
+d2015,total deaths in 2015
+d2016,total deaths in 2016
+d2017,total deaths in 2017
+d2018,total deaths in 2018
+d2019,total deaths in 2019
+su2008,suicides in 2008
+su2009,suicides in 2009
+su2010,suicides in 2010
+su2011,suicides in 2011
+su2012,suicides in 2012
+su2013,suicides in 2013
+su2014,suicides in 2014
+su2015,suicides in 2015
+su2016,suicides in 2016
+su2017,suicides in 2017
+su2018,suicides in 2018
+su2019,suicides in 2019
+da2008,acute drug- or alcohol-related deaths in 2008
+da2009,acute drug- or alcohol-related deaths in 2009
+da2010,acute drug- or alcohol-related deaths in 2010
+da2011,acute drug- or alcohol-related deaths in 2011
+da2012,acute drug- or alcohol-related deaths in 2012
+da2013,acute drug- or alcohol-related deaths in 2013
+da2014,acute drug- or alcohol-related deaths in 2014
+da2015,acute drug- or alcohol-related deaths in 2015
+da2016,acute drug- or alcohol-related deaths in 2016
+da2017,acute drug- or alcohol-related deaths in 2017
+da2018,acute drug- or alcohol-related deaths in 2018
+da2019,acute drug- or alcohol-related deaths in 2019
+il2008,illness/natural deaths in 2008
+il2009,illness/natural deaths in 2009
+il2010,illness/natural deaths in 2010
+il2011,illness/natural deaths in 2011
+il2012,illness/natural deaths in 2012
+il2013,illness/natural deaths in 2013
+il2014,illness/natural deaths in 2014
+il2015,illness/natural deaths in 2015
+il2016,illness/natural deaths in 2016
+il2017,illness/natural deaths in 2017
+il2018,illness/natural deaths in 2018
+il2019,illness/natural deaths in 2019
+o2008,other deaths in 2008
+o2009,other deaths in 2009
+o2010,other deaths in 2010
+o2011,other deaths in 2011
+o2012,other deaths in 2012
+o2013,other deaths in 2013
+o2014,other deaths in 2014
+o2015,other deaths in 2015
+o2016,other deaths in 2016
+o2017,other deaths in 2017
+o2018,other deaths in 2018
+o2019,other deaths in 2019
+ho2008,homicides in 2008
+ho2009,homicides in 2009
+ho2010,homicides in 2010
+ho2011,homicides in 2011
+ho2012,homicides in 2012
+ho2013,homicides in 2013
+ho2014,homicides in 2014
+ho2015,homicides in 2015
+ho2016,homicides in 2016
+ho2017,homicides in 2017
+ho2018,homicides in 2018
+ho2019,homicides in 2019
+ac2008,accidents in 2008
+ac2009,accidents in 2009
+ac2010,accidents in 2010
+ac2011,accidents in 2011
+ac2012,accidents in 2012
+ac2013,accidents in 2013
+ac2014,accidents in 2014
+ac2015,accidents in 2015
+ac2016,accidents in 2016
+ac2017,accidents in 2017
+ac2018,accidents in 2018
+ac2019,accidents in 2019
+adp2008,average daily inmate population in 2008
+adp2009,average daily inmate population in 2009
+adp2010,average daily inmate population in 2010
+adp2011,average daily inmate population in 2011
+adp2012,average daily inmate population in 2012
+adp2013,average daily inmate population in 2013
+adp2014,average daily inmate population in 2014
+adp2015,average daily inmate population in 2015
+adp2016,average daily inmate population in 2016
+adp2017,average daily inmate population in 2017
+adp2018,average daily inmate population in 2018
+adp2019,average daily inmate population in 2019
+med2008,medical provider(s) in 2008
+med2009,medical provider(s) in 2009
+med2010,medical provider(s) in 2010
+med2011,medical provider(s) in 2011
+med2012,medical provider(s) in 2012
+med2013,medical provider(s) in 2013
+med2014,medical provider(s) in 2014
+med2015,medical provider(s) in 2015
+med2016,medical provider(s) in 2016
+med2017,medical provider(s) in 2017
+med2018,medical provider(s) in 2018
+med2019,medical provider(s) in 2019
