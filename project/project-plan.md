@@ -1,35 +1,40 @@
-# Project Plan: Population Analysis in The Americas
+Project Plan: Jail Deaths Dataset Analysis
+Title:
+Jail Deaths in the U.S.: An Analysis of Trends and Causes
 
-## Title
-Population Dynamics in North and South America
+Main Question:
+What are the trends and contributing factors to jail deaths across different U.S. states?
 
-## Main Question
-How do population trends differ across North and South America, and what are the factors influencing these trends?
+Description:
+This project will analyze a dataset of jail deaths in the U.S., focusing on trends related to cause of death, demographics, and state-level differences. The goal is to identify patterns, understand potential systemic issues, and provide insights into the effectiveness of jail health care and the conditions within U.S. jails.
 
-## Description
-This project will analyze the population dynamics of North and South America, focusing on trends such as growth rates, migration, urbanization, and demographics. Using statistical methods and geographic analysis, this project aims to identify key factors influencing population changes in both continents. Insights gained will contribute to understanding regional challenges, such as resource allocation, infrastructure development, and social policies.
+Datasources:
+Datasource: Jail Deaths Dataset (ZIP file with Excel)
+URL: Jail Deaths Dataset
+Description: Data on in-custody deaths across U.S. jails, including cause, date, state, and other demographics.
+Work Packages:
+Data Collection:
 
-## Datasources
-- **Datasource1**: World Bank Population Data  
-  - **Metadata URL**: [World Bank Population Data](https://data.worldbank.org/indicator/SP.POP.TOTL)  
-  - **Data URL**: [CSV Format](https://data.worldbank.org/indicator/SP.POP.TOTL?view=chart)  
-  - **Data Type**: CSV  
-  - **Description**: Annual population data for countries in North and South America.
+Objective: Download, extract, and load the dataset.
+Deliverable: Loaded data into a pandas DataFrame.
+Data Cleaning:
 
-## Work Packages
-- **Work Package #1**: Data Collection and Cleaning  
-  - Gather population data from World Bank and other reliable sources.  
-  - Clean and preprocess the data, handling missing values and outliers.  
+Objective: Clean missing values, remove duplicates, and ensure correct data types.
+Deliverable: A cleaned and processed DataFrame.
+Exploratory Data Analysis (EDA):
 
-- **Work Package #2**: Trend Analysis  
-  - Perform time series analysis to identify population growth rates and trends over the past decades.
+Objective: Identify key trends, such as death rates over time and state-level differences.
+Deliverable: EDA results with visualizations.
+Data Storage:
 
-- **Work Package #3**: Regional Comparison  
-  - Compare population trends between North and South America.  
-  - Investigate the role of migration, fertility rates, and mortality rates in population changes.
-
-- **Work Package #4**: Report and Recommendations  
-  - Analyze results and provide insights on policy implications.  
-  - Present findings in a final report with recommendations for addressing population-related challenges.
-
-This project will be refined as new data and insights are collected throughout the semester.
+Objective: Store cleaned data in both SQLite and CSV formats for future analysis.
+Deliverable: SQLite database and CSV file.
+Timeline:
+Work Package	Duration	Milestone
+Data Collection	Week 1	Data downloaded and loaded.
+Data Cleaning	Week 2	Data cleaned and preprocessed.
+Exploratory Data Analysis	Week 3	Key trends identified and visualized.
+Data Storage	Week 4	Data saved in SQLite and CSV formats.
+Next Steps:
+Optional: Investigate deeper correlations or implement predictive models based on the dataset.
+Continue refining analysis as additional insights emerge.
