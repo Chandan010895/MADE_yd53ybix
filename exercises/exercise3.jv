@@ -14,8 +14,8 @@ pipeline WorldBankDataPipeline {
   WorldBankDataExtractor
     -> WorldBankDataXLSXInterpreter
     -> WorldBankDataSheetPicker
-    -> WorldBankDataSelector
     -> WorldBankDataHeaderWriter
+    -> WorldBankDataSelector
     -> WorldBankDataTableInterpreter
     -> BondIssuanceLoader;
 
@@ -75,18 +75,14 @@ pipeline WorldBankDataPipeline {
   valuetype BondValueType oftype decimal {
     constraints: [ BondValueRange ];
 }
-   constraint BondValueRange oftype RangeConstraint {
-   lowerBound: 0;
-   lowerBoundInclusive: false;
-   upperBound: 1;
- }
+constraint BondValueRange on decimal:
+       value >= 0.0 and value <= 1.0;
 
 valuetype GDPValueType oftype decimal {
-    constraints: [ GDPValueRange ];
+    constraints: [ BondValueRange ];
 }
-   constraint GDPValueRange oftype RangeConstraint {
-   lowerBound: 0;
    
- 
-}
+  constraint GDPValueRange on decimal:
+       value > 0.0 ;
+  
 }
