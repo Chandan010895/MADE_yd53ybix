@@ -9,6 +9,18 @@
 // - Store data in a SQLite database
 
 pipeline WorldBankDataPipeline {
+
+  // Define the pipeline flow
+  WorldBankDataExtractor
+    -> WorldBankDataXLSXInterpreter
+    -> WorldBankDataSheetPicker
+    -> WorldBankDataSelector
+    -> WorldBankDataHeaderWriter
+    -> WorldBankDataTableInterpreter
+    -> BondIssuanceLoader;
+
+  WorldBankDataTableInterpreter
+    -> GDPPerCapitaLoader;
   // 1. Extract the XLSX file from the web via HttpExtractor
   block WorldBankDataExtractor oftype HttpExtractor {
     url: "https://thedocs.worldbank.org/en/doc/7d852628d96b9411d43e5d36d5dff941-0050062022/original/Graphs-Chapter-5-02082022.xlsx";
@@ -22,6 +34,10 @@ pipeline WorldBankDataPipeline {
     sheetName: 'Figure S5.1.2';
   }
 
+  block WorldBankDataSelector oftype CellRangeSelector {
+   select: range P2:S45;
+  }
+   
   // 4. Validate and write custom headers to the sheet
   block WorldBankDataHeaderWriter oftype CellWriter {
     at: range P2:S2;
@@ -37,10 +53,10 @@ pipeline WorldBankDataPipeline {
   block WorldBankDataTableInterpreter oftype TableInterpreter {
     header: true;
     columns: [
-      "Country Code" oftype text, // Valid ISO 3166-1 alpha-3 code
+      "Country Code" oftype CountryCodeAlpha3, // Valid ISO 3166-1 alpha-3 code
       "Economy" oftype text,
-      "GDP per Capita" oftype decimal, // Positive decimal
-      "Bond Issuance Share" oftype decimal // Decimal between 0 and 1
+      "GDP per Capita" oftype GDPValueType, // Positive decimal
+      "Bond Issuance Share" oftype BondValueType // Decimal between 0 and 1
     ];
   }
 
@@ -56,14 +72,21 @@ pipeline WorldBankDataPipeline {
     file: "./country-stats.sqlite";
   }
 
-  // Define the pipeline flow
-  WorldBankDataExtractor
-    -> WorldBankDataXLSXInterpreter
-    -> WorldBankDataSheetPicker
-    -> WorldBankDataHeaderWriter
-    -> WorldBankDataTableInterpreter
-    -> BondIssuanceLoader;
+  valuetype BondValueType oftype decimal {
+    constraints: [ BondValueRange ];
+}
+   constraint BondValueRange oftype RangeConstraint {
+   lowerBound: 0;
+   lowerBoundInclusive: false;
+   upperBound: 1;
+ }
 
-  WorldBankDataTableInterpreter
-    -> GDPPerCapitaLoader;
+valuetype GDPValueType oftype decimal {
+    constraints: [ GDPValueRange ];
+}
+   constraint GDPValueRange oftype RangeConstraint {
+   lowerBound: 0;
+   
+ 
+}
 }
