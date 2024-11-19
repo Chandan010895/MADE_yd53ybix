@@ -1,0 +1,69 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+// Example: Process World Bank Data
+// Learning goals:
+// - Extract data from XLSX sheets
+// - Validate and process table data
+// - Store data in a SQLite database
+
+pipeline WorldBankDataPipeline {
+  // 1. Extract the XLSX file from the web via HttpExtractor
+  block WorldBankDataExtractor oftype HttpExtractor {
+    url: "https://thedocs.worldbank.org/en/doc/7d852628d96b9411d43e5d36d5dff941-0050062022/original/Graphs-Chapter-5-02082022.xlsx";
+  }
+
+  // 2. Interpret the incoming file as an XLSX Workbook
+  block WorldBankDataXLSXInterpreter oftype XLSXInterpreter { }
+
+  // 3. Pick the 'Figure S5.1.2' sheet from the Workbook
+  block WorldBankDataSheetPicker oftype SheetPicker {
+    sheetName: 'Figure S5.1.2';
+  }
+
+  // 4. Validate and write custom headers to the sheet
+  block WorldBankDataHeaderWriter oftype CellWriter {
+    at: range P2:S2;
+    write: [
+      "Country Code",
+      "Economy",
+      "GDP per Capita",
+      "Bond Issuance Share"
+    ];
+  }
+
+  // 5. Interpret the table and validate column data
+  block WorldBankDataTableInterpreter oftype TableInterpreter {
+    header: true;
+    columns: [
+      "Country Code" oftype text, // Valid ISO 3166-1 alpha-3 code
+      "Economy" oftype text,
+      "GDP per Capita" oftype decimal, // Positive decimal
+      "Bond Issuance Share" oftype decimal // Decimal between 0 and 1
+    ];
+  }
+
+  // 6. Load the bond issuance data into a SQLite database
+  block BondIssuanceLoader oftype SQLiteLoader {
+    table: "bondIssuance";
+    file: "./country-stats.sqlite";
+  }
+
+  // 7. Load the GDP per capita data into the SQLite database
+  block GDPPerCapitaLoader oftype SQLiteLoader {
+    table: "gdpPerCapita";
+    file: "./country-stats.sqlite";
+  }
+
+  // Define the pipeline flow
+  WorldBankDataExtractor
+    -> WorldBankDataXLSXInterpreter
+    -> WorldBankDataSheetPicker
+    -> WorldBankDataHeaderWriter
+    -> WorldBankDataTableInterpreter
+    -> BondIssuanceLoader;
+
+  WorldBankDataTableInterpreter
+    -> GDPPerCapitaLoader;
+}
