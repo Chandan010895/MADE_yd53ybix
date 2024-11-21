@@ -40,15 +40,14 @@ pipeline WorldBankDataPipeline {
    
   // 4. Validate and write custom headers to the sheet
   block WorldBankDataHeaderWriter oftype CellWriter {
-    at: range P2:S2;
-    write: [
-      "Country Code",
-      "Economy",
-      "GDP per Capita",
-      "Bond Issuance Share"
-    ];
-  }
-
+        at: range P2:S2;
+        write: [
+        "Country Code",
+        "Economy",
+        "GDP per Capita",
+        "Bond Issuance Share"
+        ];
+    }
   // 5. Interpret the table and validate column data
   block WorldBankDataTableInterpreter oftype TableInterpreter {
     header: true;
@@ -79,10 +78,10 @@ constraint BondValueRange on decimal:
        value >= 0.0 and value <= 1.0;
 
 valuetype GDPValueType oftype decimal {
-    constraints: [ BondValueRange ];
+    constraints: [ GDPValueRange ];
 }
    
   constraint GDPValueRange on decimal:
-       value > 0.0 ;
-  
+       value >= 0;
+  
 }
