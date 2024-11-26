@@ -1,5 +1,21 @@
-# Ignore CSV files
-/data/*.csv
+# Ignore all files in the /data directory
+/data/*
 
-# Ignore SQLite database files
-/data/*.db
+# But keep the .gitignore file in the /data directory
+!/data/.gitignore
+
+# Ignore the jail_deaths.csv file
+jail_deaths.csv
+
+# Ignore the jail_deaths.db file
+jail_deaths.db
+
+# Ignore the pipeline log file
+pipeline_log.txt
+
+# Ignore Python compiled files
+__pycache__/
+*.py[cod]
+
+# Ignore environment files
+.env
