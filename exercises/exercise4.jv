@@ -1,0 +1,107 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+pipeline TemperatureDataPipeline {
+
+    // Define the pipeline flow
+    DataExtractor
+        -> ArchiveInterpreter
+        -> DataFilePicker
+        -> DataTextFileInterpreter
+        -> DataCSVInterpreter
+        -> DataHeaderWriter
+        -> DataBatteryHeaderRename
+        -> DataTableInterpreter
+        -> DataTemperatureToFahrenheit
+        -> DataBatteryTemperatureToFahrenheit
+        -> DataSQLiteLoader;
+
+    // 1. Extract the dataset by downloading the zip file
+    block DataExtractor oftype HttpExtractor {
+        url: "https://www.mowesta.com/data/measure/mowesta-dataset-20221107.zip";
+    }
+
+    // 2. Use ArchiveInterpreter to extract the contents of the zip file
+    block ArchiveInterpreter oftype ArchiveInterpreter {
+        archiveType: "zip";
+    }
+
+    // 3. Pick the required file (e.g., `data.csv`) from the extracted content
+    block DataFilePicker oftype FilePicker {
+        path: "./data.csv"; // Specify the correct path to the CSV file
+    }
+
+    // 4. Interpret the text-based file (e.g., CSV) for parsing
+    block DataTextFileInterpreter oftype TextFileInterpreter {}
+
+    // 5. Parse the CSV file with the specified delimiter
+    block DataCSVInterpreter oftype CSVInterpreter {
+        delimiter: ";"; // CSV file delimiter
+    }
+
+    // 6. Rename headers to standard names
+    block DataHeaderWriter oftype CellWriter {
+        at: range A1:E1;
+        write: ["id", "producer", "model", "month", "temperature"];
+    }
+
+    // 7. Rename the battery temperature header
+    block DataBatteryHeaderRename oftype CellWriter {
+        at: cell J1;
+        write: ["battery_temperature"];
+    }
+
+    // 8. Interpret the table and validate column data
+    block DataTableInterpreter oftype TableInterpreter {
+        header: true;
+        columns: [
+            "id" oftype PositiveInteger,
+            "producer" oftype text,
+            "model" oftype text,
+            "month" oftype MonthType,
+            "temperature" oftype decimal,
+            "battery_temperature" oftype decimal
+        ];
+    }
+
+    // 9. Transform temperature from Celsius to Fahrenheit
+    transform CelsiusToFahrenheit {
+        from Celsius oftype decimal;
+        to Fahrenheit oftype decimal;
+        Fahrenheit: (Celsius * 9/5) + 32;
+    }
+
+    block DataTemperatureToFahrenheit oftype TableTransformer {
+        inputColumns: ['temperature'];
+        outputColumn: 'temperature';
+        uses: CelsiusToFahrenheit;
+    }
+
+    block DataBatteryTemperatureToFahrenheit oftype TableTransformer {
+        inputColumns: ['battery_temperature'];
+        outputColumn: 'battery_temperature';
+        uses: CelsiusToFahrenheit;
+    }
+
+    // 10. Load the processed data into a SQLite database
+    block DataSQLiteLoader oftype SQLiteLoader {
+        table: "temperatures";
+        file: "./temperatures.sqlite";
+        }
+
+    // 11. Define constraints and validations
+    constraint PositiveConstraint on integer:
+        value >= 0;
+
+    valuetype PositiveInteger oftype integer {
+        constraints: [PositiveConstraint];
+    }
+
+    constraint MonthConstraint on integer:
+        value >= 1 and value <= 12;
+
+    valuetype MonthType oftype integer {
+        constraints: [MonthConstraint];
+    }
+}
