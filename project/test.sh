@@ -8,7 +8,7 @@ LOG_FILE="$DATA_DIR/pipeline_log.txt"
 
 # Run the data pipeline
 echo "Running data pipeline..."
-python3 main.py
+python3 pipeline.py
 
 # Check if the CSV file is created
 if [ -f "$CSV_PATH" ]; then
