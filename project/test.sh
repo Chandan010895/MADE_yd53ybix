@@ -10,6 +10,10 @@ LOG_FILE="$DATA_DIR/pipeline_log.txt"
 echo "Running data pipeline..."
 python3 pipeline.py
 
+# Run the tests
+echo "Running tests..."
+python3 -m unittest discover -s . -p 'test.py'
+
 # Check if the CSV file is created
 if [ -f "$CSV_PATH" ]; then
     echo "CSV file created successfully."
