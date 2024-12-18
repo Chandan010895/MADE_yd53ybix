@@ -1,0 +1,113 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+// Exercise 5: GTFS Data Processing Pipeline
+// Learning goals:
+// - Work with domain-specific GTFS data
+// - Implement custom filters and validations
+
+// 1. Define the GTFS pipeline flow
+pipeline GTFSPipeline {
+
+    // Define the sequence of blocks for the GTFS data processing pipeline.
+    // This represents the flow of data as it moves through each step of the pipeline.
+    GTFSExtractor -> GTFSZipInterpreter; // Extract the GTFS zip file and interpret it
+    GTFSZipInterpreter
+        -> GTFSFilePicker        // Selects the specific "stops.txt" file from the extracted archive
+        -> GTFSTextFileInterpreter // Interprets the file as text
+        -> GTFSCSVInterpreter      // Interprets the file as a CSV
+        -> GTFSColumnDeleter       // Removes unnecessary columns
+        -> GTFSTableInterpreter    // Converts the file to a structured table format
+        -> GTFSLoader;             // Loads the final data into a SQLite database
+
+  // 2. Block to download the GTFS data (ZIP file) from the specified URL
+  block GTFSExtractor oftype HttpExtractor {
+    // URL where the GTFS data file (in ZIP format) is hosted
+    url: "https://gtfs.rhoenenergie-bus.de/GTFS.zip"; 
+  }
+
+  // 3. Block to interpret the extracted ZIP file
+  block GTFSZipInterpreter oftype ArchiveInterpreter {
+    // Specify that the extracted file is a ZIP archive
+    archiveType: "zip"; 
+  }
+
+  // 4. Block to select the specific "stops.txt" file from the extracted ZIP archive
+  block GTFSFilePicker oftype FilePicker {
+    // Path to the file within the extracted ZIP archive
+    path: "./stops.txt"; 
+  }
+
+  // 5. Block to interpret the "stops.txt" file as a text file with UTF-8 encoding
+  block GTFSTextFileInterpreter oftype TextFileInterpreter {
+    // Set the encoding to UTF-8 to ensure correct interpretation of text data, including special characters
+    encoding: "utf8"; 
+  }
+
+  // 6. Block to interpret the text file as a CSV file with specific delimiters and escape characters
+  block GTFSCSVInterpreter oftype CSVInterpreter {
+    // Specify that the CSV delimiter is a comma
+    delimiter: ','; 
+    // Specify that fields are enclosed in double quotes
+    enclosing: '"';  
+    // Escape character for quotes within the enclosed fields
+    enclosingEscape: '"'; 
+  }
+
+  // 7. Block to delete unnecessary columns from the CSV data
+  block GTFSColumnDeleter oftype ColumnDeleter {
+    // Specify columns to delete, identified by their positions (e.g., B, D, H, etc.)
+    delete: [column B, column D, column H, column I, column J, column K, column L]; 
+    // These columns are not necessary for further processing
+  }
+
+  // 8. Define a custom value type for zone_id (integer) with constraints
+  valuetype ZoneId oftype integer {
+    // The zone_id must meet the specified constraint
+    constraints: [ZoneIdConstraint]; 
+  }
+
+  // 9. Define a constraint that ensures the zone_id value equals 1925
+  constraint ZoneIdConstraint on integer:
+    value == 1925;  // Ensure zone_id is exactly 1925
+
+  // 10. Define a custom value type for geographical coordinates (latitude/longitude)
+  valuetype GeoCoordinate90 oftype decimal {
+    // The coordinates must meet the specified range constraint
+    constraints: [GeoCoordinateRange]; 
+  }
+
+  // 11. Define a constraint that ensures geographical coordinates (latitude/longitude) are between -90 and 90 degrees
+  constraint GeoCoordinateRange oftype RangeConstraint {
+    // Lower bound for latitude/longitude (inclusive)
+    lowerBound: -90;              
+    lowerBoundInclusive: true;    
+    // Upper bound for latitude/longitude (inclusive)
+    upperBound: 90;               
+    upperBoundInclusive: true;    
+  }
+
+  // 12. Block to interpret the "stops.txt" file as a structured table with a defined schema
+  block GTFSTableInterpreter oftype TableInterpreter {
+    // The first row of the file contains the column headers
+    header: true; 
+    
+    // Define the columns in the table and their corresponding data types
+    columns: [
+      "stop_id" oftype integer,       // ID of the stop (integer)
+      "stop_name" oftype text,        // Name of the stop (text)
+      "stop_lat" oftype GeoCoordinate90, // Latitude of the stop (decimal with constraints)
+      "stop_lon" oftype GeoCoordinate90, // Longitude of the stop (decimal with constraints)
+      "zone_id" oftype ZoneId,      // Zone ID (integer constrained to 1925)
+    ];
+  }
+
+  // 13. Block to load the processed and validated data into an SQLite database
+  block GTFSLoader oftype SQLiteLoader {
+    // Name of the table to store the data in the SQLite database
+    table: "stops";        
+    // Name of the SQLite database file
+    file: "gtfs.sqlite";   
+  }
+}
