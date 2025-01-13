@@ -59,8 +59,14 @@ def download_and_extract_zip(url):
                 return df
             else:
                 raise FileNotFoundError("No Excel file found in the extracted files.")
+    except requests.exceptions.RequestException as e:
+        logging.error(f"HTTP error during download: {str(e)}")
+        raise
+    except zipfile.BadZipFile as e:
+        logging.error(f"Error extracting ZIP file: {str(e)}")
+        raise
     except Exception as e:
-        logging.error(f"Error during download or extraction: {str(e)}")
+        logging.error(f"Unexpected error: {str(e)}")
         raise
 
 def load_and_clean_data(df):
